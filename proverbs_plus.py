@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from enum import Enum, unique
 import random_quote
 from screen_scrap import scrap_page
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QObject
 
 @unique
 class Direction(Enum):
@@ -13,16 +13,20 @@ class Direction(Enum):
     NEXT = 1
     PREVIOUS = 2
 
-class Thread_scrap(QThread):
-    scrapped = pyqtSignal(str, bool)
-    url = None
-    txt = None
-    wait_secs = None
+class Worker(QObject):
+    # signal arguments must match emit function argument types
+    done = pyqtSignal(str, bool)
+    
+    def __init__(self, url, txt, wait_secs):
+        QObject.__init__(self)
+        self.url = url
+        self.txt = txt
+        self.wait_secs = wait_secs
 
-    # code in this method will run asynchronously on a separate thread
-    def run(self):
+    # code in this method will run asynchronously on a separate thread after it gets connected to the Thread 'started' signal
+    def dowork(self):
         scrap_result, bool_interesting = scrap_page(self.url, self.txt, self.wait_secs)
-        self.scrapped.emit(scrap_result, bool_interesting)
+        self.done.emit(scrap_result, bool_interesting)
 
 
 class Main_Window(Ui_MainWindow):
@@ -36,15 +40,22 @@ class Main_Window(Ui_MainWindow):
         self.btn_screen_0.clicked.connect(lambda: self.switch_screen(1, 'Scrap Screen'))
         self.btn_screen_1.clicked.connect(lambda: self.switch_screen(0, 'Proverbs'))
         
-        t_scrap = Thread_scrap()
-        # enter url and regex txt for scrapping here
-        t_scrap.url = ""
-        t_scrap.txt = ""
-        t_scrap.wait_secs = 3 * 60 * 60 -20
+        # enter url, regex txt, and delay for scrapping here
+        url = ''
+        txt = ''
+        wait_secs = 3 * 60 * 60 -20
 
-        # connect scrapped signal to a slot
-        t_scrap.scrapped.connect(self.set_page)
-        t_scrap.start()
+        self.worker = Worker(url, txt, wait_secs)
+        self.thread = QThread()
+       
+        # recommended way of running code on a separate thread
+        self.worker.moveToThread(self.thread)
+
+        # connect signals to slots
+        self.worker.done.connect(self.set_page)
+        self.thread.started.connect(self.worker.dowork)
+        
+        self.thread.start()
 
         self.center()
         MainWindow.show()
@@ -89,3 +100,4 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     Main_Window(MainWindow)
     sys.exit(app.exec_())
+
