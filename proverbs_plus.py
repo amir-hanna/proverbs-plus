@@ -4,6 +4,7 @@ from proverbs_plus_ui import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from enum import Enum, unique
 import random_quote
+import script_path
 from screen_scrap import scrap_page
 from PyQt5.QtCore import QThread, pyqtSignal, QObject
 
@@ -81,7 +82,7 @@ class Main_Window(Ui_MainWindow):
 
     def get_verse(self, direction):
         if direction == Direction.RANDOM:
-            self.quote_list, self.cur_pos = random_quote.quote_list('/home/amir/Documents/proverbs.json', 'fef08fec8be3919359bb0780c0e3320d37f49997f6dcd3e2cbf54ecc45a8c912eec80abcec9f394a295b0b16889bfbe2a90a2ca6530ab3a79a45c222168a46d9')
+            self.quote_list, self.cur_pos = random_quote.quote_list(script_path.GetAbsScriptPath()[2] + '/proverbs.json', 'fef08fec8be3919359bb0780c0e3320d37f49997f6dcd3e2cbf54ecc45a8c912eec80abcec9f394a295b0b16889bfbe2a90a2ca6530ab3a79a45c222168a46d9')
             return self.quote_list[self.cur_pos]
         elif direction == Direction.PREVIOUS and self.cur_pos > 0:
             self.cur_pos -= 1

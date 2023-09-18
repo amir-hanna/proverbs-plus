@@ -22,3 +22,5 @@ random_quote.py          random quote module for quote generation
 screen_scrap.py          screen scrap module
 sha_hash.py              hashing module
 t_stamp.py               time stamp module to prevent overloading the server
+script_path		 to get the absolute path of the running script
+proverbs.json		 the book of proverbs in json format
