@@ -1,7 +1,9 @@
 # proverbs-plus
 
 Usage:
-  Place all files in the same folder and run proverbs_plus.py
+  Place all files in the same folder
+  Install requirements using: pip3 install -r requirements.txt
+  Run: python3 proverbs_plus.py
 
 There are two screens, on the first a random verse from King james proverbs book is displayed, and on the second screen the result of a screen scrapping script is displayed. If there is a pre-configured interesting result on the second screen, the button on the first screen that switches to the second changes its background to light red.
 
@@ -22,5 +24,6 @@ random_quote.py          random quote module for quote generation
 screen_scrap.py          screen scrap module
 sha_hash.py              hashing module
 t_stamp.py               time stamp module to prevent overloading the server
-script_path		 to get the absolute path of the running script
-proverbs.json		 the book of proverbs in json format
+script_path              to get the absolute path of the running script
+proverbs.json            the book of proverbs in json format
+requirements.txt         required modules for this project
